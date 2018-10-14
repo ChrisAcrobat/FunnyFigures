@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Funny Figure Presenter by Christoffer Olofsson</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="https://docs.google.com/drawings/d/1iV2wvURUlUsVA3n7r52PMtW19-tQbpWretaaqV5mJwQ/pub?w=192&h=192">
+
+		<link rel="stylesheet" href="/FunnyFigures/Presenter/Stylesheet.css">
+
+		<!-- Imports -->
+		<script type="text/javascript" src="/generics/Color.js"></script>
+		<script type="text/javascript" src="/generics/Position.js"></script>
+		<script type="text/javascript" src="/generics/Line.js"></script>
+		<!-- /Imports -->
+
+		<script type="text/javascript" src="/FunnyFigures/Presenter/JavaScript.js"></script>
+
+		<link rel="stylesheet" href="/login/stylesheets/Small.css">
+		<script src="/login/JavaScript.js" async defer></script>
+	</head>
+
+	<body onload="onload()">
+		<canvas id="canvas" class="hidden"></canvas>
+
+		<div id="canvas-console">
+			<input id="btnDisplayOptions" type="button" onclick="displayOptions()" value="Välj figur" disabled>
+
+			<div id="canvas-options">
+				<div>
+					<input id="cbxDisplayBorders" type="checkbox" onclick="refreshCanvas()">
+					<label for="cbxDisplayBorders">Visa gränser</label>
+				</div>
+
+				<div>
+					<input id="cbxDisplayAuthors" type="checkbox" onclick="refreshCanvas()">
+					<label for="cbxDisplayAuthors">Visa namn</label>
+				</div>
+			</div>
+
+			<input type="button" onclick="printOut()" value="Skriv ut">
+
+			<div id="widget-login"></div>
+
+			<div id="select-figure" class="hidden">
+				<div id="figure-options"><!-- Auto generate input options. --></div>
+	
+				<input type="button" onclick="updateFigure()" value="Hämta figur">
+			</div>
+		</div>
+	</body>
+</html>

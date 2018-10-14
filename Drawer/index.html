@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Funny Figure Drawer by Christoffer Olofsson</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="https://docs.google.com/drawings/d/19BU0xVeKtDSot5_ugpR67Kc5qy0T6ub1qOtCXfWxOFU/pub?w=192&h=192">
+
+		<link rel="stylesheet" href="/FunnyFigures/Drawer/Stylesheet.css">
+
+		<!-- Imports -->
+		<script type="text/javascript" src="/generics/Color.js"></script>
+		<script type="text/javascript" src="/generics/Position.js"></script>
+		<script type="text/javascript" src="/generics/Line.js"></script>
+		<!-- /Imports -->
+
+		<script type="text/javascript" src="/FunnyFigures/Drawer/JavaScript.js"></script>
+
+		<link rel="stylesheet" href="/login/stylesheets/Tiny.css">
+		<script src="/login/JavaScript.js" async defer></script>
+	</head>
+
+	<body onload="onload()">
+		<canvas id="canvas" class="hidden"></canvas>
+
+		<div id="canvas-console">
+			<input id="btnPublish" type="button" onclick="publish()" value="Publicera nytt Huvud">
+
+			<input id="btnShowLineMarkers" class="hidden" type="button" onmousedown="showLineMarkers(true)" onmouseup="showLineMarkers(false)" value="Markera linjer" disabled>
+
+			<input id="btnGetUnfinished" type="button" onclick="fetchUnfinished()" value="Hämta påbörjad figur" disabled>
+
+			<select id="sltInputMode" onchange="changeInputMode(this)">
+				<option value="PEN" selected>Penna</option>
+				<option value="ERASER">Radergummi</option>
+			</select>
+
+			<input id="line-color" type="color">
+		</div>
+
+		<div id="widget-login"></div>
+
+		<div id="offset-displayer">
+			Offset | X: <span id="offset-x">0</span> | Y: <span id="offset-y">0</span>
+		</div>
+
+		<div id="splash" class="fade-animate disable-text-interaction">
+			Vänligen notera att detta främst är ett barnspel - Håll innehållet barnvänligt
+		</div>
+	</body>
+</html>
