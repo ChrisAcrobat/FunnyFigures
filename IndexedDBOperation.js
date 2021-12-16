@@ -1,6 +1,6 @@
 class IndexedDBOperation {
 	static do = call => {
-		let worker = new Worker('indexedDB.js');
+		let worker = new Worker('/FunnyFigures/indexedDB.js');
 		let resolve;
 		let reject;
 		let promise = new Promise((_resolve, _reject) => {resolve = _resolve; reject = _reject;});
