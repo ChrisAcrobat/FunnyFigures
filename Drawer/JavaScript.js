@@ -1,5 +1,4 @@
 'use strict'
-// Pseudo-constants
 const A4_WIDTH = 795.69;	// 210 mm
 const A4_HEIGHT = 1124.52;	// 297 mm
 const COLOR_BORDER_UPPER = new Color('AAA');
@@ -37,8 +36,7 @@ var previousOffsetPos = undefined;
 var canvasBoundingClientRect = undefined;
 
 // Functions
-function onload()
-{
+function onload(){
 	// Init element variables
 	btnPublish = document.getElementById('btnPublish');
 	btnGetUnfinished = document.getElementById('btnGetUnfinished');
@@ -51,7 +49,6 @@ function onload()
 	elementOffsetY = document.getElementById('offset-y');
 
 	// Call init functions
-	checkUser();
 	chechUnfinishedFigures();
 
 	// Init variables
@@ -72,9 +69,7 @@ function onload()
 
 	canvasContext = elementCanvas.getContext('2d');
 }
-
-function getEventPos(event)
-{
+function getEventPos(event){
 	let x = 0;
 	let y = 0;
 	if(event.touches === undefined)
@@ -98,9 +93,7 @@ function getEventPos(event)
 
 	return new Position(x, y);
 }
-
-function mouseDown(event)
-{
+function mouseDown(event){
 	let eventPos = getEventPos(event);
 
 	eventPos.X -= canvasBoundingClientRect.left;
@@ -144,9 +137,7 @@ function mouseDown(event)
 	
 	return false;
 }
-
-function doLine(innerEvent)
-{
+function doLine(innerEvent){
 	if(inputMode_pen)
 	{
 		let eventPos = getEventPos(innerEvent);
@@ -159,9 +150,7 @@ function doLine(innerEvent)
 		window.requestAnimationFrame(updateCanvas);
 	}
 }
-
-function doOffset(innerEvent)
-{
+function doOffset(innerEvent){
 	let eventPos = getEventPos(innerEvent);
 
 	eventPos.X -= canvasBoundingClientRect.left;
@@ -174,9 +163,7 @@ function doOffset(innerEvent)
 
 	window.requestAnimationFrame(updateCanvas);
 }
-
-function mouseUp(event)
-{
+function mouseUp(event){
 	event.preventDefault();
 
 	if(event.touches !== undefined)
@@ -200,9 +187,7 @@ function mouseUp(event)
 	
 	return false;
 }
-
-function keyPressed(event)
-{
+function keyPressed(event){
 	event = window.event ? window.event : event;
 
 	if(!event.repeat && event.ctrlKey)
@@ -219,9 +204,7 @@ function keyPressed(event)
 		}
 	}
 }
-
-function resize()
-{
+function resize(){
 	frameWidth = window.innerWidth;
 	frameHeight = window.innerHeight;
 	elementCanvas.width = frameWidth;
@@ -229,9 +212,7 @@ function resize()
 	canvasBoundingClientRect = elementCanvas.getBoundingClientRect();
 	window.requestAnimationFrame(updateCanvas);
 }
-
-function updateCanvas(timespan)
-{
+function updateCanvas(timespan){
 	canvasContext.clearRect(0, 0, frameWidth, frameHeight);
 
 	drawPaper();
@@ -252,19 +233,16 @@ function updateCanvas(timespan)
 		elementOffsetY.innerHTML = -offset_Y;
 	}
 }
-
-function showLineMarkers(state)
-{
+function showLineMarkers(state){
 	showLineHints = state;
 	updateCanvas();
 }
-function drawLineHints(borderPos)
-{
+function drawLineHints(borderPos){
 	let borderPosUpper = borderPos - DRAWABLE_BORDER_HEIGHT;
 	let linesWitinBorder = previousLines.filter(line => {return (borderPos > line.pos_1.Y && line.pos_1.Y > borderPosUpper)
 															||	(borderPos > line.pos_2.Y && line.pos_2.Y > borderPosUpper);});
 	linesWitinBorder.forEach(line => {
-		canvasContext.strokeStyle = COLOR_LINE_HINT.toRGBA();
+		canvasContext.strokeStyle = COLOR_LINE_HINT.toRGBAString();
 		canvasContext.beginPath();
 		canvasContext.arc(line.pos_1.X - offset_X, line.pos_1.Y - offset_Y, ERASER_SIZE, 0, 2*Math.PI);
 		canvasContext.stroke();
@@ -273,9 +251,7 @@ function drawLineHints(borderPos)
 		canvasContext.stroke();
 	});
 }
-
-function changeInputMode(elementSelect)
-{
+function changeInputMode(elementSelect){
 	let options = elementSelect.selectedOptions;
 	if(0 < options.length)
 	{
@@ -299,9 +275,7 @@ function changeInputMode(elementSelect)
 		}
 	}
 }
-
-function traceEraser(event)
-{
+function traceEraser(event){
 	let eventPos = getEventPos(event);
 	eventPos.X -= canvasBoundingClientRect.left;
 	eventPos.Y -= canvasBoundingClientRect.top;
@@ -321,34 +295,26 @@ function traceEraser(event)
 	canvasContext.arc(eventPos.X, eventPos.Y, ERASER_SIZE, 0, 2*Math.PI);
 	canvasContext.stroke();
 }
-
-function drawPaper()
-{
+function drawPaper(){
 	canvasContext.fillStyle = '#fff';
 	canvasContext.fillRect(-offset_X, -offset_Y, A4_WIDTH, A4_HEIGHT);
 }
-
-function drawUpperBorder(posY=0)
-{
+function drawUpperBorder(posY=0){
 	if(0 < posY)
 	{
 		canvasContext.fillStyle = COLOR_BORDER_UPPER.toString();
 		canvasContext.fillRect(-offset_X, -offset_Y, A4_WIDTH, posY - DRAWABLE_BORDER_HEIGHT);
 	}
 }
-
-function drawUpperBorderLine(posY=0)
-{
+function drawUpperBorderLine(posY=0){
 	if(0 < posY)
 	{
 		canvasContext.fillStyle = COLOR_BORDER_LOWER.toString();
 		canvasContext.fillRect(-offset_X, -offset_Y + posY - DRAWABLE_BORDER_HEIGHT - 1, A4_WIDTH, DRAWABLE_BORDER_HEIGHT);
 	}
 }
-
-function drawBorderHint()
-{
-	let text = 'Detta är vad nästa ritare kommer att se →';
+function drawBorderHint(){
+	let text = 'This is what next drawer will see →';
 	let fontSize = '14';
 	let font = 'px Arial';
 	let x = -offset_X - 1;
@@ -366,9 +332,7 @@ function drawBorderHint()
 		canvasContext.restore();
 	}
 }
-
-function drawLowerBorder()
-{
+function drawLowerBorder(){
 	let localLines = lines.filter(line => {return line.visable;});
 	if(0 < localLines.length)
 	{
@@ -377,9 +341,7 @@ function drawLowerBorder()
 		canvasContext.fillRect(-offset_X, -offset_Y + lowestLinePos, A4_WIDTH, -DRAWABLE_BORDER_HEIGHT);
 	}
 }
-
-function getLowestLinePos(lines=Array())
-{
+function getLowestLinePos(lines=Array()){
 	let linePos = undefined;
 	if(0 < lines.length)
 	{
@@ -392,9 +354,7 @@ function getLowestLinePos(lines=Array())
 	}
 	return linePos;
 }
-
-function continueLine(currentPos)
-{
+function continueLine(currentPos){
 	let isPointLowEnough = previousLowestPos === undefined ? true : previousLowestPos - DRAWABLE_BORDER_HEIGHT < currentPos.Y;
 
 	if(isPointLowEnough)
@@ -410,9 +370,7 @@ function continueLine(currentPos)
 		previousLinePos = undefined;
 	}
 }
-
-function undoLine(pos_1, pos_2)
-{
+function undoLine(pos_1, pos_2){
 	if(previousLinePos === undefined)
 	{
 		let line = lines.filter(line => {return line.visable;}).pop();
@@ -423,9 +381,7 @@ function undoLine(pos_1, pos_2)
 		}
 	}
 }
-
-function redoLine(pos_1, pos_2)
-{
+function redoLine(pos_1, pos_2){
 	if(previousLinePos === undefined)
 	{
 		let line = lines.filter(line => {return !line.visable;}).shift();
@@ -436,10 +392,8 @@ function redoLine(pos_1, pos_2)
 		}
 	}
 }
-
 let FIRST_LINE_DRAWN = undefined;
-function addLine(pos_1, pos_2)
-{
+function addLine(pos_1, pos_2){
 	let color = new Color(elementLineColor.value);
 
 	let now = Date.now();
@@ -453,11 +407,8 @@ function addLine(pos_1, pos_2)
 	line.visable = true;
 	lines.push(line);
 }
-
-function drawLines(lines)
-{
+function drawLines(lines){
 	canvasContext.lineWidth = 1;
-
 	lines.filter(line => {return line.visable;}).forEach((line, index) => {
 		canvasContext.beginPath();
 		canvasContext.moveTo(line.pos_1.X - offset_X, line.pos_1.Y - offset_Y);
@@ -467,14 +418,12 @@ function drawLines(lines)
 		canvasContext.closePath();
 	});
 }
-
-function publish()
-{
+function publish(){
 	btnPublish.disabled = true;
-	displayMessage('Publiserar');
+	displayMessage('Publishing');
 
-	let stringifyLines = Array();
-	lines.filter(line => {return line.visable;}).forEach(line => {
+	let stringifyLines = Array(); // Needed?
+	lines.filter(line => line.visable).forEach(line => {
 		let localLine = {
 			time: line.layer,
 			x1: line.pos_1.X,
@@ -487,229 +436,116 @@ function publish()
 	});
 
 	let type = 1;	// TODO: Do not hardcode. Tre segment
-	let name = window.prompt('Publisera som (namn):', '');
-	if(name === null)
-	{
+	let name = window.prompt('Save as:', '');
+	if(name === null){
 		btnPublish.disabled = false;
 		return;	// Abort
 	}
 
-	// Fetch Data from backend.
-	var params = 'module=FunnyFigures.PublishBodyPart'
-			+	'&type=' + type
-			+	'&lines=' + JSON.stringify(stringifyLines)
-			+	'&bodyPart=' + bodyPart
-			+	'&derivedFrom=' + derivedFrom
-			+	'&name=' + name;
+	let author;
+	do{
+		author = window.prompt('Your name:', '');
+	}while(author ? false : !confirm('Are you sure you don\'t want to add your name?'));
 
-	// Send data to server
-	var url = '/api/';
-	var httpRequest = new XMLHttpRequest();
-	httpRequest.open('POST', url, true);
-	//Send the proper header information along with the request
-	httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	httpRequest.onreadystatechange = function()
-	{
-		if(httpRequest.readyState == 4 && httpRequest.status == 200)
-		{
-			if(this.responseText !== '')
-			{
-				var returnData = JSON.parse(this.responseText);
-				switch(returnData)
-				{
-					case 'DONE':
-						elementSplash.classList.add('hidden');
-						alert('Publicering klar');
-						location.reload();
-						break;
-
-					case 'NOT-PUBLISHED!':
-						btnPublish.disabled = false;
-						displayMessage('Publisering misslyckades, försök igen senare');
-						break;
-				}
-			}
+	IndexedDBOperation.do({
+		operation: 'StoreBodyPart',
+		data: {
+			type: type,
+			lines: stringifyLines,
+			bodyPart: bodyPart,
+			derivedFrom: derivedFrom,
+			name: name,
+			author: author
 		}
-	}
-	httpRequest.onerror = function()
-	{
+	}).then(response => {
+		switch(response){
+			case 'DONE':
+				elementSplash.classList.add('hidden');
+				alert('Body part stored');
+				location.reload();
+				break;
+			case 'NOT-PUBLISHED':
+				btnPublish.disabled = false;
+				displayMessage('Body part failed to store, try again later');
+				break;
+		}
+	}).catch(()=>{
+		console.error('publish', error);
 		btnPublish.disabled = false;
-		displayMessage('Publisering misslyckades, försök igen senare');
-	}
-	httpRequest.send(params);
+		displayMessage('Body part failed to store, try again later');
+	});
 }
-
-function displayMessage(message)
-{
+function displayMessage(message){
 	elementSplash.innerHTML = message;
 	elementSplash.classList.remove('hidden');
 	elementSplash.classList.remove('fade-animate');
 	window.requestAnimationFrame(function(){window.requestAnimationFrame(function(){elementSplash.classList.add('fade-animate');});});
 }
-
-function fetchUnfinished()
-{
+function fetchUnfinished(){
 	btnGetUnfinished.disabled = true;
-	let type = 1;	// TODO: Do not hardcode. Tre segment
 
-	// Fetch Data from backend.
-	var params = 'module=FunnyFigures.GetPartlyFigure'
-			+	'&type=' + type;
-
-	// Send data to server
-	var url = '/api/';
-	var httpRequest = new XMLHttpRequest();
-	httpRequest.open('POST', url, true);
-	//Send the proper header information along with the request
-	httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	httpRequest.onreadystatechange = function()
-	{
-		if(httpRequest.readyState == 4 && httpRequest.status == 200)
-		{
-			if(this.responseText !== '')
-			{
-				let returnData = JSON.parse(this.responseText);
-				derivedFrom = returnData.derivedFrom;
-				fetchChildLines(derivedFrom, returnData.bodyPartNextName);
-				bodyPart = returnData.bodyPartNext;
-			}
-			else
-			{
-				displayMessage('Kunde inte hämta påbörjad figur');
-				btnGetUnfinished.disabled = false;
-			}
+	IndexedDBOperation.do	({
+		operation: 'GetPartlyFigures',
+		data: {
+			type: 1 // TODO: Do not hardcode. Tre segment
 		}
-	}
-	httpRequest.onerror = function()
-	{
-		displayMessage('Kunde inte hämta påbörjad figur');
+	}).then(entry => {
+		derivedFrom = entry.derivedFrom;
+		fetchChildLines(derivedFrom, entry.bodyPartNextName);
+		bodyPart = entry.bodyPartNext;
+	}).catch(error => {
+		console.error('fetchUnfinished', error);
+		displayMessage('Could not load previous figures');
 		btnGetUnfinished.disabled = false;
-	}
-	httpRequest.send(params);
+	});
 }
-
-function checkUser()
-{
-	// Fetch Data from backend.
-	var params = 'module=Login.GetIsUserSignedIn';
-
-	// Send data to server
-	var url = '/api/';
-	var httpRequest = new XMLHttpRequest();
-	httpRequest.open('POST', url, true);
-	//Send the proper header information along with the request
-	httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	httpRequest.onreadystatechange = function()
-	{
-		if(httpRequest.readyState == 4 && httpRequest.status == 200)
-		{
-			if(this.responseText !== '')
-			{
-				var returnData = JSON.parse(this.responseText);
-				if(returnData)
-				{
-					btnPublish.disabled = false;
-				}
-			}
+function chechUnfinishedFigures(){
+	IndexedDBOperation.do({
+		operation: 'GetPartlyFigures',
+		data: {
+			type: 1 // TODO: Do not hardcode. Tre segment
 		}
-	}
-	httpRequest.onerror = function()
-	{
-		displayMessage('Kunde inte kontrollera inloggning');
-	}
-	httpRequest.send(params);
+	}).then(returnData => {
+		if(returnData){
+			btnGetUnfinished.disabled = false;
+		}
+	}).catch(error => {
+		console.error('chechUnfinishedFigures', error);
+		displayMessage('Could not validate previous figures');
+		btnGetUnfinished.disabled = false;
+	});
 }
-
-function chechUnfinishedFigures()
-{
-	let type = 1;	// TODO: Do not hardcode. Tre segment
-
-	// Fetch Data from backend.
-	var params = 'module=FunnyFigures.ChechUnfinishedFigures'
-			+	'&type=' + type;
-
-	// Send data to server
-	var url = '/api/';
-	var httpRequest = new XMLHttpRequest();
-	httpRequest.open('POST', url, true);
-	//Send the proper header information along with the request
-	httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	httpRequest.onreadystatechange = function()
-	{
-		if(httpRequest.readyState == 4 && httpRequest.status == 200)
-		{
-			if(this.responseText !== '')
-			{
-				var returnData = JSON.parse(this.responseText);
-				if(returnData)
-				{
-					btnGetUnfinished.disabled = false;
-				}
-			}
+function fetchChildLines(childID, currentBodyName){
+	IndexedDBOperation.do({
+		operation: 'GetFigureLines',
+		data: {
+			figureID: childID
 		}
-	}
-	httpRequest.onerror = function()
-	{
-		displayMessage('Kunde inte kotrollera ofärdiga figurer');
-	}
-	httpRequest.send(params);
-}
-
-function fetchChildLines(childID, currentBodyName)
-{
-	let type = 1;	// TODO: Do not hardcode. Tre segment
-
-	// Fetch Data from backend.
-	var params = 'module=FunnyFigures.GetFigureLines'
-			+	'&figureID=' + childID;
-
-	// Send data to server
-	var url = '/api/';
-	var httpRequest = new XMLHttpRequest();
-	httpRequest.open('POST', url, true);
-	//Send the proper header information along with the request
-	httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	httpRequest.onreadystatechange = function()
-	{
-		if(httpRequest.readyState == 4 && httpRequest.status == 200)
-		{
-			if(this.responseText !== '')
-			{
-				let returnData = JSON.parse(this.responseText);
-				previousLines = Array();
-				returnData.forEach(lineData => {
-					let pos_1 = new Position(lineData['x1'], lineData['y1']);
-					let pos_2 = new Position(lineData['x2'], lineData['y2']);
-					let line = new Line(pos_1, pos_2, new Color(lineData['Color']), lineData['Time']);
-					line.visable = true;
-					previousLines.push(line);
-				});
-
-				previousLowestPos = getLowestLinePos(previousLines);
-
-				btnPublish.value = 'Publisera ' + currentBodyName;
-				btnGetUnfinished.classList.add('hidden');
-
-				let btnShowLineMarkers = document.getElementById('btnShowLineMarkers');
-				btnShowLineMarkers.classList.remove('hidden');
-
-				window.requestAnimationFrame(function(timespan)
-				{
-					showLineHints = true;
-					updateCanvas(timespan);
-					setInterval(function()
-					{
-						showLineHints = false;
-						updateCanvas(timespan);
-						btnShowLineMarkers.disabled = false;
-					}, 5000);
-				});
-			}
-		}
-	}
-	httpRequest.onerror = function()
-	{
-		displayMessage('Kunde inte hämta figur');
-	}
-	httpRequest.send(params);
+	}).then(returnData => {
+		previousLines = Array();
+		returnData.forEach(lineData => {
+			let pos_1 = new Position(lineData['x1'], lineData['y1']);
+			let pos_2 = new Position(lineData['x2'], lineData['y2']);
+			let line = new Line(pos_1, pos_2, new Color(lineData['Color']), lineData['Time']);
+			line.visable = true;
+			previousLines.push(line);
+		});
+		previousLowestPos = getLowestLinePos(previousLines);
+		btnPublish.value = 'Publishing ' + currentBodyName;
+		btnGetUnfinished.classList.add('hidden');
+		let btnShowLineMarkers = document.getElementById('btnShowLineMarkers');
+		btnShowLineMarkers.classList.remove('hidden');
+		window.requestAnimationFrame(timespan => {
+			showLineHints = true;
+			updateCanvas(timespan);
+			setInterval(()=>{
+				showLineHints = false;
+				updateCanvas(timespan);
+				btnShowLineMarkers.disabled = false;
+			}, 5000);
+		});
+	}).catch(error => {
+		console.error('fetchChildLines', error);
+		displayMessage('Could not get figure');
+	});
 }

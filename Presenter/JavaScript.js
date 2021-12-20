@@ -1,5 +1,4 @@
 'use strict'
-// Pseudo-constants
 const A4_WIDTH = 795.69;	// 210 mm
 const A4_HEIGHT = 1124.52;	// 297 mm
 const DRAWABLE_BORDER_HEIGHT = 8;
@@ -34,95 +33,59 @@ function onload()
 
 function fetchChildren(parentID, children)
 {
-	// Fetch Data from backend.
-	var params = 'module=FunnyFigures.GetCompleteChildren'
-			+	'&parent=' + parentID;
-
-	// Send data to server
-	var url = '/api/';
-	var httpRequest = new XMLHttpRequest();
-	httpRequest.open('POST', url, true);
-	//Send the proper header information along with the request
-	httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	httpRequest.onreadystatechange = function()
-	{
-		if(httpRequest.readyState == 4 && httpRequest.status == 200)
-		{
-			if(this.responseText !== '')
-			{
-				let returnData = JSON.parse(this.responseText);
-
-				returnData.forEach(child => {
-					let grandChildren = Array();
-
-					let childID = parseInt(child.ID);
-					let childName = child.name;
-					let childData = {'name': childName, 'ID': childID, 'children': grandChildren};
-
-					if(selectedOptions.length === 0 || (0 < selectedOptions.filter(option => {return option.ID === parentID}).length && children.length < 1))
-					{
-						selectedOptions.push(childData);
-						fetchChildLines(childID);
-					}
-
-					fetchChildren(childID, grandChildren);
-
-					children.push(childData);
-				});
-			}
+	IndexedDBOperation.do({
+		operation: 'GetCompleteFigures',
+		data: {
+			parentID: parentID,
+			children: children
 		}
-	}
-	httpRequest.onerror = function()
-	{
-		// TODO: Display error.
-	}
-	httpRequest.send(params);
+	}).then(returnData => {
+		returnData.forEach(child => {
+			let grandChildren = Array();
+
+			let childID = parseInt(child.ID);
+			let childName = child.name;
+			let childData = {'name': childName, 'ID': childID, 'children': grandChildren};
+
+			if(selectedOptions.length === 0 || (0 < selectedOptions.filter(option => {return option.ID === parentID}).length && children.length < 1))
+			{
+				selectedOptions.push(childData);
+				fetchChildLines(childID);
+			}
+
+			fetchChildren(childID, grandChildren);
+
+			children.push(childData);
+		});
+	});
 }
 
 function fetchChildLines(figureID)
 {
 	activeFetchings++;
-	let type = 1;	// TODO: Do not hardcode. Tre segment
-
-	// Fetch Data from backend.
-	var params = 'module=FunnyFigures.GetFigureLines'
-			+	'&figureID=' + figureID;
-
-	// Send data to server
-	var url = '/api/';
-	var httpRequest = new XMLHttpRequest();
-	httpRequest.open('POST', url, true);
-	//Send the proper header information along with the request
-	httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-	httpRequest.onreadystatechange = function()
-	{
-		if(httpRequest.readyState == 4 && httpRequest.status == 200)
-		{
-			checkActiveFetchings();
-			if(this.responseText !== '')
-			{
-				if(0 < selectedOptions.filter(option => {return option.ID === figureID}).length)
-				{
-					let returnData = JSON.parse(this.responseText);
-					returnData.forEach(lineData => {
-						let pos_1 = new Position(lineData.x1, lineData.y1);
-						let pos_2 = new Position(lineData.x2, lineData.y2);
-						let line = new Line(pos_1, pos_2, new Color(lineData['Color']), lineData['Time']);
-
-						line.figureID = figureID;
-						allLines.push(line);
-					});
-
-					refreshCanvas();
-				}
-			}
+	IndexedDBOperation.do({
+		operation: 'GetFigureLines',
+		data: {
+			figureID: figureID
 		}
-	}
-	httpRequest.onerror = function()
-	{
+	}).then(returnData => {
 		checkActiveFetchings();
-	}
-	httpRequest.send(params);
+		if(0 < selectedOptions.filter(option => {return option.ID === figureID}).length)
+		{
+			returnData.forEach(lineData => {
+				let pos_1 = new Position(lineData.x1, lineData.y1);
+				let pos_2 = new Position(lineData.x2, lineData.y2);
+				let line = new Line(pos_1, pos_2, new Color(lineData['Color']), lineData['Time']);
+
+				line.figureID = figureID;
+				allLines.push(line);
+			});
+
+			refreshCanvas();
+		}
+	}).catch(error => {
+		checkActiveFetchings();
+	});
 }
 
 function checkActiveFetchings()
@@ -307,7 +270,7 @@ function printOut()
 
 	var dataUrl = elementCanvas.toDataURL();
 	var windowContent = '<!DOCTYPE html><html><head>';
-	windowContent += '<title>Rolig figur ('+names+')</title></head>';
+	windowContent += '<title>Funny figure ('+names+')</title></head>';
 	windowContent += '<body><img src="'+dataUrl+'"></body></html>';
 
 	var printWindow = window.open('','','width=800,height=600');

@@ -16,38 +16,33 @@
 		<script type="text/javascript" src="https://chrisacrobat.github.io/js-compilation/Line.js"></script>
 		<!-- /Imports -->
 
+		<script type="text/javascript" src="/FunnyFigures/IndexedDBOperation.js"></script>
 		<script type="text/javascript" src="/FunnyFigures/Presenter/JavaScript.js"></script>
-
-		<link rel="stylesheet" href="/login/stylesheets/Small.css">
-		<script src="/login/JavaScript.js" async defer></script>
 	</head>
 
 	<body onload="onload()">
 		<canvas id="canvas" class="hidden"></canvas>
 
 		<div id="canvas-console">
-			<input id="btnDisplayOptions" type="button" onclick="displayOptions()" value="Välj figur" disabled>
+			<input id="btnDisplayOptions" type="button" onclick="displayOptions()" value="Choose figure" disabled>
 
 			<div id="canvas-options">
 				<div>
 					<input id="cbxDisplayBorders" type="checkbox" onclick="refreshCanvas()">
-					<label for="cbxDisplayBorders">Visa gränser</label>
+					<label for="cbxDisplayBorders">Show borders</label>
 				</div>
 
 				<div>
 					<input id="cbxDisplayAuthors" type="checkbox" onclick="refreshCanvas()">
-					<label for="cbxDisplayAuthors">Visa namn</label>
+					<label for="cbxDisplayAuthors">Display authors</label>
 				</div>
 			</div>
 
-			<input type="button" onclick="printOut()" value="Skriv ut">
-
-			<div id="widget-login"></div>
+			<input type="button" onclick="printOut()" value="Print">
 
 			<div id="select-figure" class="hidden">
 				<div id="figure-options"><!-- Auto generate input options. --></div>
-	
-				<input type="button" onclick="updateFigure()" value="Hämta figur">
+				<input type="button" onclick="updateFigure()" value="Fetch figgure">
 			</div>
 		</div>
 	</body>
