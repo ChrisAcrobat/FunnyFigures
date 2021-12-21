@@ -39,6 +39,7 @@ let elementPublishInformationAbort;
 let elementPublishInformationPublish;
 let elementPublishInformationAuthor;
 let elementPublishInformationFigureName;
+let isLastPart;
 
 // Functions
 function onload(){
@@ -457,7 +458,7 @@ function publish(){
 			bodyPart: bodyPart,
 			derivedFrom: derivedFrom,
 			name: elementPublishInformationFigureName.value,
-			author: elementPublishInformationAbort.value
+			author: elementPublishInformationAuthor.value
 		}
 	}).then(response => {
 		switch(response){
