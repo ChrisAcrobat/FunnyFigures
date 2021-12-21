@@ -296,8 +296,8 @@ function traceEraser(event){
 
 	if(0 < event.buttons)
 	{
-		lines.filter(line => {return line.visable && (eraserPos.getDistance(line.pos_1) < ERASER_SIZE || eraserPos.getDistance(line.pos_2) < ERASER_SIZE);}).forEach(line => {
-			line.visable = false;
+		lines.filter(line => {return line.visible && (eraserPos.getDistance(line.pos_1) < ERASER_SIZE || eraserPos.getDistance(line.pos_2) < ERASER_SIZE);}).forEach(line => {
+			line.visible = false;
 		});
 	}
 
@@ -330,7 +330,7 @@ function drawBorderHint(){
 	let fontSize = '14';
 	let font = 'px Arial';
 	let x = -offset_X - 1;
-	let y = getLowestLinePos(lines.filter(line => {return line.visable;}));
+	let y = getLowestLinePos(lines.filter(line => {return line.visible;}));
 
 	if(y !== undefined)
 	{
@@ -345,7 +345,7 @@ function drawBorderHint(){
 	}
 }
 function drawLowerBorder(){
-	let localLines = lines.filter(line => {return line.visable;});
+	let localLines = lines.filter(line => {return line.visible;});
 	if(0 < localLines.length)
 	{
 		let lowestLinePos = getLowestLinePos(localLines);
@@ -385,10 +385,10 @@ function continueLine(currentPos){
 function undoLine(pos_1, pos_2){
 	if(previousLinePos === undefined)
 	{
-		let line = lines.filter(line => {return line.visable;}).pop();
+		let line = lines.filter(line => {return line.visible;}).pop();
 		if(line !== undefined)
 		{
-			line.visable = false;
+			line.visible = false;
 			window.requestAnimationFrame(updateCanvas);
 		}
 	}
@@ -396,10 +396,10 @@ function undoLine(pos_1, pos_2){
 function redoLine(pos_1, pos_2){
 	if(previousLinePos === undefined)
 	{
-		let line = lines.filter(line => {return !line.visable;}).shift();
+		let line = lines.filter(line => {return !line.visible;}).shift();
 		if(line !== undefined)
 		{
-			line.visable = true;
+			line.visible = true;
 			window.requestAnimationFrame(updateCanvas);
 		}
 	}
@@ -416,12 +416,12 @@ function addLine(pos_1, pos_2){
 	let time = now - FIRST_LINE_DRAWN;
 
 	let line = new Line(pos_1, pos_2, color, time);
-	line.visable = true;
+	line.visible = true;
 	lines.push(line);
 }
 function drawLines(lines){
 	canvasContext.lineWidth = 1;
-	lines.filter(line => {return line.visable;}).forEach((line, index) => {
+	lines.filter(line => {return line.visible;}).forEach((line, index) => {
 		canvasContext.beginPath();
 		canvasContext.moveTo(line.pos_1.X - offset_X, line.pos_1.Y - offset_Y);
 		canvasContext.lineTo(line.pos_2.X - offset_X, line.pos_2.Y - offset_Y);
@@ -438,7 +438,7 @@ function publish(){
 	displayMessage('Publishing');
 
 	let stringifyLines = Array(); // Needed?
-	lines.filter(line => line.visable).forEach(line => {
+	lines.filter(line => line.visible).forEach(line => {
 		let localLine = {
 			time: line.layer,
 			x1: line.pos_1.X,
@@ -530,7 +530,7 @@ function fetchChildLines(childID, currentBodyName){
 			let pos_1 = new Position(lineData['x1'], lineData['y1']);
 			let pos_2 = new Position(lineData['x2'], lineData['y2']);
 			let line = new Line(pos_1, pos_2, new Color(lineData['Color']), lineData['Time']);
-			line.visable = true;
+			line.visible = true;
 			previousLines.push(line);
 		});
 		previousLowestPos = getLowestLinePos(previousLines);
