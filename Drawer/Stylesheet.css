@@ -52,7 +52,7 @@ body > div
 
 .hidden
 {
-	display: none;
+	display: none !important;
 }
 
 @keyframes fade
@@ -80,6 +80,26 @@ body > div
 	background-color: whitesmoke;
 	font-family: 'Comic Sans MS', cursive, sans-serif;
 	text-align: center;
+}
+
+#publish-information-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+#publish-information {
+	background-color: whitesmoke;
+	display: grid;
+	justify-items: end;
+}
+#publish-information > :last-child {
+	width: 100%;
+}
+#publish-information > :last-child > :last-child {
+	float: right;
 }
 
 .disable-text-interaction

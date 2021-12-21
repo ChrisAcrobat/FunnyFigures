@@ -25,7 +25,7 @@
 		<canvas id="canvas" class="hidden"></canvas>
 
 		<div id="canvas-console">
-			<input id="btnPublish" type="button" onclick="publish()" value="Publish new head">
+			<input id="btnPublish" type="button" onclick="openPublish()" value="Publish new head">
 
 			<input id="btnShowLineMarkers" class="hidden" type="button" onmousedown="showLineMarkers(true)" onmouseup="showLineMarkers(false)" value="Mark lines" disabled>
 
@@ -37,6 +37,27 @@
 			</select>
 
 			<input id="line-color" type="color">
+		</div>
+
+		<div id="publish-information-wrapper" class="hidden disable-text-interaction">
+			<fieldset id="publish-information">
+				<legend>Publish figure</legend>
+
+				<div>
+					<label>Name your part</label>
+					<input type="text" id="publish-information-name">
+				</div>
+
+				<div>
+					<label>Your name</label>
+					<input type="text" id="publish-information-author">
+				</div>
+
+				<div>
+					<input type="button" value="Abort" id="publish-information-abort">
+					<input type="button" value="Publish" id="publish-information-publish">
+				</div>
+			</fieldset>
 		</div>
 
 		<div id="offset-displayer">

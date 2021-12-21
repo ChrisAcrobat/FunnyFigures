@@ -34,6 +34,11 @@ var previousLinePos = undefined;
 var previousLowestPos = undefined;
 var previousOffsetPos = undefined;
 var canvasBoundingClientRect = undefined;
+let elementPublishInformation;
+let elementPublishInformationAbort;
+let elementPublishInformationPublish;
+let elementPublishInformationAuthor;
+let elementPublishInformationFigureName;
 
 // Functions
 function onload(){
@@ -47,6 +52,11 @@ function onload(){
 	elementOffsetDisplayer = document.getElementById('offset-displayer');
 	elementOffsetX = document.getElementById('offset-x');
 	elementOffsetY = document.getElementById('offset-y');
+	elementPublishInformation = document.getElementById('publish-information-wrapper');
+	elementPublishInformationAbort = document.getElementById('publish-information-abort');;
+	elementPublishInformationPublish = document.getElementById('publish-information-publish');;
+	elementPublishInformationAuthor = document.getElementById('publish-information-author');;
+	elementPublishInformationFigureName = document.getElementById('publish-information-name');;
 
 	// Call init functions
 	chechUnfinishedFigures();
@@ -61,6 +71,8 @@ function onload(){
 	document.onkeydown = keyPressed;
 	btnPublish.addEventListener('mouseover', function(){drawUpperBorder(getLowestLinePos(lines)); drawBorderHint();});
 	btnPublish.addEventListener('mouseout', function(){updateCanvas();});
+	elementPublishInformationAbort.addEventListener('click', ()=>elementPublishInformation.classList.add('hidden'));
+	elementPublishInformationPublish.addEventListener('click', publish);
 	elementCanvas.addEventListener('mousedown', mouseDown, false);
 	elementCanvas.addEventListener('mouseup', mouseUp, false);
 	elementCanvas.addEventListener('touchstart', mouseDown, false);
@@ -418,6 +430,9 @@ function drawLines(lines){
 		canvasContext.closePath();
 	});
 }
+function openPublish(){
+	elementPublishInformation.classList.remove('hidden');
+}
 function publish(){
 	btnPublish.disabled = true;
 	displayMessage('Publishing');
@@ -435,33 +450,21 @@ function publish(){
 		stringifyLines.push(localLine);
 	});
 
-	let type = 1;	// TODO: Do not hardcode. Tre segment
-	let name = window.prompt('Save as:', '');
-	if(name === null){
-		btnPublish.disabled = false;
-		return;	// Abort
-	}
-
-	let author;
-	do{
-		author = window.prompt('Your name:', '');
-	}while(author ? false : !confirm('Are you sure you don\'t want to add your name?'));
-
 	IndexedDBOperation.do({
 		operation: 'StoreBodyPart',
 		data: {
-			type: type,
+			type: 1, // TODO: Do not hardcode. Three segment
 			lines: stringifyLines,
 			bodyPart: bodyPart,
 			derivedFrom: derivedFrom,
-			name: name,
-			author: author
+			name: elementPublishInformationFigureName.value,
+			author: elementPublishInformationAbort.value
 		}
 	}).then(response => {
 		switch(response){
 			case 'DONE':
 				elementSplash.classList.add('hidden');
-				alert('Body part stored');
+				displayMessage('Body part stored');
 				location.reload();
 				break;
 			case 'NOT-PUBLISHED':
@@ -487,7 +490,7 @@ function fetchUnfinished(){
 	IndexedDBOperation.do	({
 		operation: 'GetPartlyFigures',
 		data: {
-			type: 1 // TODO: Do not hardcode. Tre segment
+			type: 1 // TODO: Do not hardcode. Three segment
 		}
 	}).then(entry => {
 		derivedFrom = entry.derivedFrom;
@@ -503,7 +506,7 @@ function chechUnfinishedFigures(){
 	IndexedDBOperation.do({
 		operation: 'GetPartlyFigures',
 		data: {
-			type: 1 // TODO: Do not hardcode. Tre segment
+			type: 1 // TODO: Do not hardcode. Three segment
 		}
 	}).then(returnData => {
 		if(returnData){
@@ -542,7 +545,7 @@ function fetchChildLines(childID, currentBodyName){
 				showLineHints = false;
 				updateCanvas(timespan);
 				btnShowLineMarkers.disabled = false;
-			}, 5000);
+			}, 1500);
 		});
 	}).catch(error => {
 		console.error('fetchChildLines', error);
