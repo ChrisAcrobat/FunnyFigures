@@ -346,8 +346,7 @@ function drawBorderHint(){
 }
 function drawLowerBorder(){
 	let localLines = lines.filter(line => {return line.visible;});
-	if(0 < localLines.length)
-	{
+	if(!isLastPart && 0 < localLines.length){
 		let lowestLinePos = getLowestLinePos(localLines);
 		canvasContext.fillStyle = COLOR_BORDER_LOWER.toString();
 		canvasContext.fillRect(-offset_X, -offset_Y + lowestLinePos, A4_WIDTH, -DRAWABLE_BORDER_HEIGHT);
@@ -494,7 +493,7 @@ function fetchUnfinished(){
 		}
 	}).then(entry => {
 		derivedFrom = entry.derivedFrom;
-		fetchChildLines(derivedFrom, entry.bodyPartNextName);
+		fetchChildLines(entry);
 		bodyPart = entry.bodyPartNext;
 	}).catch(error => {
 		console.error('fetchUnfinished', error);
@@ -518,11 +517,21 @@ function chechUnfinishedFigures(){
 		btnGetUnfinished.disabled = false;
 	});
 }
-function fetchChildLines(childID, currentBodyName){
+function fetchChildLines(entry){
+	IndexedDBOperation.do({
+		operation: 'IsLastPart',
+		data: {
+			type: 1, // TODO: Do not hardcode. Three segment
+			bodyPart: entry.bodyPartNext
+		}
+	}).then(response => isLastPart = response).catch(()=>{
+		console.error('IsLastPart', error);
+	});
+
 	IndexedDBOperation.do({
 		operation: 'GetFigureLines',
 		data: {
-			figureID: childID
+			figureID: entry.derivedFrom
 		}
 	}).then(returnData => {
 		previousLines = Array();
@@ -534,7 +543,7 @@ function fetchChildLines(childID, currentBodyName){
 			previousLines.push(line);
 		});
 		previousLowestPos = getLowestLinePos(previousLines);
-		btnPublish.value = 'Publishing ' + currentBodyName;
+		btnPublish.value = 'Publishing ' + entry.bodyPartNextName;
 		btnGetUnfinished.classList.add('hidden');
 		let btnShowLineMarkers = document.getElementById('btnShowLineMarkers');
 		btnShowLineMarkers.classList.remove('hidden');

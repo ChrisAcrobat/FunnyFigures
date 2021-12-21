@@ -126,10 +126,14 @@ let callbacks = {
 		.sort(e => -e.timestamp)
 		.map(e => {
 			return {
-				name: e.name ?? e.timestamp,
+				name: ((e.name ? e.name : new Date(e.timestamp).toDateString()) + (e.author ? ' ('+e.author+')' : '')).trim(),
 				ID: e.id
 			}
 		}));
+	},
+	IsLastPart: async data => {
+		let parts = PARTS_IN_TYPE[data.type];
+		postMessage(parts[parts.length-1] === data.bodyPart);
 	}
 }
 for(const key in callbacks){
